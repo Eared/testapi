@@ -22,7 +22,7 @@ def upload_file():
             file.save(file.filename)
             with open('./' + file.filename) as text:
                 lines = [line.rstrip() for line in text]
-            print(lines)
+            file.remove()
             for line in lines:
                 print(line)
                 reg = re.search(r"\A\+[0-9]{11}\z", line)
