@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify
 from app import app, db
 from app.models import File, FileData, file_schema, files_schema
-import re
+import re, os
 
 @app.route('/')
 @app.route('/index')
@@ -22,7 +22,7 @@ def upload_file():
             file.save(file.filename)
             with open('./' + file.filename) as text:
                 lines = [line.rstrip() for line in text]
-            file.remove()
+            os.remove('./' + file.filename)
             for line in lines:
                 print(line)
                 reg = re.search(r"\A\+[0-9]{11}\z", line)
