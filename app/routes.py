@@ -12,28 +12,28 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
-        f = request.files['file']
-        u = File(name=f.filename)
-        if not re.search(r"\.txt", f.filename):
+        file = request.files['file']
+        query = File(name=file.filename)
+        if not re.search(r"\.txt", file.filename):
             return "error: wrong file format"
-        if File.query.filter_by(name=f.filename).first():
+        if File.query.filter_by(name=file.filename).first():
             return 'error: file already exists'
         else:
-            f.save("temp.txt")
-            with open('./temp.txt') as q:
-                lines = [line.rstrip() for line in q]
+            file.save(file.filename)
+            with open('./' + file.filename) as text:
+                lines = [line.rstrip() for line in text]
             print(lines)
             for line in lines:
                 print(line)
-                r = re.search(r"\A\+[0-9]", line)
-                if not r:
+                reg = re.search(r"\A\+[0-9]{11}\z", line)
+                if not reg:
                     return "error: wrong number " + line
-            db.session.add(u)
+            db.session.add(query)
             db.session.commit()
             for line in lines:
-                q = File.query.filter_by(name=f.filename).first()
-                y = FileData(number=line, file_id=q.id)
-                db.session.add(y)
+                filename = File.query.filter_by(name=file.filename).first()
+                query = FileData(number=line, file_id=filename.id)
+                db.session.add(query)
             db.session.commit()
             return 'file uploaded successfully'
 
